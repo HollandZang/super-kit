@@ -34,8 +34,9 @@ public class StandardLog extends BaseLog implements ILog {
     public void info(String msg, Object... args) {
         if (null == msg) return;
         meta.level.ifWrite(() -> {
-            String format = String.format(msg.replace("{}", "%s"), args);
-            System.out.println("i->" + meta.clazz.getSimpleName() + "->" + format);
+            System.out.println(meta.formatter);
+//            String format = String.format(msg.replace("{}", "%s"), args);
+//            System.out.println("i->" + meta.clazz.getSimpleName() + "->" + format);
         });
     }
 

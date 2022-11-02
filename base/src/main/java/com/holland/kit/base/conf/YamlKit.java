@@ -37,13 +37,12 @@ public class YamlKit implements ConfKit<Map<String, Object>> {
             return Either.success((Map<String, Object>) map);
 
         ClassLoader classLoader = this.getClass().getClassLoader();
-        URL         resource    = classLoader.getResource("datasource.yml");
+        URL         resource    = classLoader.getResource(uri);
         if (null == resource)
             return Either.error(new FileNotFoundException(uri));
 
         Yaml yaml = new Yaml();
         try (InputStream inputStream = resource.openStream()) {
-            List<Map<String, Object>>                load = yaml.load(inputStream);
             Map<String, Object> obj  = yaml.load(inputStream);
             if (cached)
                 CachedConf.getInstance().put(uri, obj);

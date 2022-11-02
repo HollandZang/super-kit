@@ -1,16 +1,23 @@
 package com.holland.kit.base.log;
 
 
+import com.holland.kit.base.conf.ParamConfig;
+import com.holland.kit.base.conf.YamlKit;
+import com.holland.kit.base.functional.Either;
+
+import java.util.Map;
+
 public class LogFactory {
 
     public                  LogType    LOG_TYPE;
-    public                  MetaType   META_TYPE;
     private static volatile LogFactory instance;
 
     private LogFactory() {
-        // todo 从配置表读取日志工厂信息
-        this.LOG_TYPE = LogType.STANDARD_LOG;
-        this.META_TYPE = MetaType.FROM_CODE;
+        Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log_bak.yml", true);
+        Map<String, Object> conf = read.t;
+        //noinspection unchecked
+        Object o = ((Map<String,?>)conf.get("com.holland.kit.base.log")).get("type");
+        this.LOG_TYPE = LogType.valueOf((String) o);
     }
 
     private static LogFactory getInstance() {
@@ -25,31 +32,17 @@ public class LogFactory {
     }
 
     public static ILog create(Class<?> clazz) {
-        return getInstance().LOG_TYPE.create(clazz);
+        return getInstance().LOG_TYPE.create(clazz, Meta.clone(clazz));
     }
 
-    public enum LogType {
+    private enum LogType {
         STANDARD_LOG() {
             @Override
-            public <T> ILog create(Class<T> clazz) {
-                return new StandardLog(getInstance().META_TYPE.create(clazz));
+            public <T> ILog create(Class<T> clazz, Meta meta) {
+                return new StandardLog(meta);
             }
         };
 
-        public abstract <T> ILog create(Class<T> clazz);
-    }
-
-    public enum MetaType {
-        FROM_CODE() {
-            @Override
-            public <T> Meta create(Class<T> clazz) {
-                Meta meta = new Meta();
-                meta.clazz = clazz;
-                meta.level = Level.INFO;
-                return meta;
-            }
-        };
-
-        public abstract <T> Meta create(Class<T> clazz);
+        public abstract <T> ILog create(Class<T> clazz, Meta meta);
     }
 }

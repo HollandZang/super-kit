@@ -3,6 +3,9 @@ package com.holland.kit.base.conf;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * 读取文件的缓存
+ */
 public class CachedConf {
     private static volatile CachedConf instance;
 

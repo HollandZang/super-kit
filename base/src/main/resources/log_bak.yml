@@ -1,0 +1,4 @@
+com.holland.kit.base.log:
+  type: STANDARD_LOG
+  level: TRACE
+  formatter: "%c,%d,%F,%l,%L,%m,%M,%p,%r,%t,%n"

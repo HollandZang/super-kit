@@ -39,6 +39,14 @@ public class Either<E, T> {
         return this;
     }
 
+    public void end(Consumer<E> onError, Consumer<T> onSuccess) {
+        if (e != null) {
+            onError.accept(e);
+        } else {
+            onSuccess.accept(t);
+        }
+    }
+
 //    public static void main(String[] args) {
 //        ILog    log = LogFactory.create(Either.class);
 //        Integer s   = 1;
