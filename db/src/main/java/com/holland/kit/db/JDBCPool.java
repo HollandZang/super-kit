@@ -17,7 +17,7 @@ public abstract class JDBCPool extends ObjectPool<Connection> {
     protected String  database;
     protected String  url;
 
-    public JDBCPool(Map<Object, Object> conf) {
+    public JDBCPool(Map<String, Object> conf) {
         this.driverClassName = (String) conf.get("driverClassName");
         this.host = (String) conf.get("host");
         this.port = (Integer) conf.get("port");

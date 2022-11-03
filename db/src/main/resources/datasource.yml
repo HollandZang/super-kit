@@ -9,8 +9,8 @@ com.holland.kit.db:
       database: zhxfz
       # 时区
       serverTimezone: Asia/Shanghai
-      # 把日期转换为null代替异常处理
-      zeroDateTimeBehavior: convertToNull
+      # 日期转换 CONVERT_TO_NULL, EXCEPTION, ROUND;
+      zeroDateTimeBehavior: CONVERT_TO_NULL
       # 字符集
       characterEncoding: utf8
       # 是否使用Unicode字符集，如果参数characterEncoding设置为gb2312或gbk，本参数值必须设置为true
