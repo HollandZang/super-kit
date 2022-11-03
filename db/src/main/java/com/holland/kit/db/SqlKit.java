@@ -12,6 +12,7 @@ import java.util.Map;
 class SqlKit {
     public static List<Map<String, ?>> exec(Connection connection, String sql, Object... params) {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
+//        try (PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             for (int i = 0; i < params.length; i++)
                 statement.setObject(i + 1, params[i]);
             if (statement.execute()) {
@@ -26,10 +27,10 @@ class SqlKit {
     }
 
     public static List<Map<String, ?>> genResult(ResultSet resultSet) throws SQLException {
-        int row = countRow(resultSet);
-        if (row == 0) return new ArrayList<>();
+//        int row = countRow(resultSet);
+//        if (row == 0) return new ArrayList<>();
 
-        List<Map<String, ?>> list = new ArrayList<>(row);
+        List<Map<String, ?>> list = new ArrayList<>();
         while (resultSet.next()) {
             Map<String, Object> map = new LinkedHashMap<>();
             for (int i = 1; i <= resultSet.getMetaData().getColumnCount(); i++) {
@@ -43,12 +44,10 @@ class SqlKit {
     }
 
     public static int countRow(ResultSet resultSet) throws SQLException {
-        int row = resultSet.getRow();
-        if (row > 0) {
-            resultSet.last();
-            row = resultSet.getRow();
-            resultSet.first();
-        }
+        int row;
+        resultSet.last();
+        row = resultSet.getRow();
+        resultSet.first();
         return row;
     }
 }

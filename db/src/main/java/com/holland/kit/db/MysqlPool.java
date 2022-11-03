@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 public class MysqlPool extends JDBCPool {
 
-    public MysqlPool(Map<Object, Object> conf) {
+    public MysqlPool(Map<String, Object> conf) {
         super(conf);
         try {
             Class.forName(driverClassName);
@@ -15,36 +15,43 @@ public class MysqlPool extends JDBCPool {
             System.exit(-1);
         }
         url = urlParser(conf);
+        log.info("Generate database connect uri: {}", url);
     }
 
     /**
      * 优先使用url自带的参数
      */
-    private String urlParser(Map<Object, Object> conf) {
+    private String urlParser(Map<String, Object> conf) {
         // 初始化空白参数
-        Map<Object, Object> paramMap = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
 
         // 解析原有的url
-        int i = url.indexOf('?');
-        String[] keys = url.substring(0, i)
-                .replaceAll("jdbc:mysql://(\\w*):(\\d*)/([_\\w]*)", "$1,$2,$3")
-                .split(",");
-        host = keys[0];
-        port = Integer.parseInt(keys[1]);
-        database = keys[2];
-        for (String kv : url.substring(i + 1).split("&")) {
-            String[] kv1 = kv.split("=");
-            paramMap.put(kv1[0], kv1[2]);
+        if (url != null && url.length() > 0) {
+            int i = url.indexOf('?');
+            String[] keys = url.substring(0, i)
+                    .replaceAll("jdbc:mysql://(\\w*):(\\d*)/([_\\w]*)", "$1,$2,$3")
+                    .split(",");
+            host = keys[0];
+            port = Integer.parseInt(keys[1]);
+            database = keys[2];
+            for (String kv : url.substring(i + 1).split("&")) {
+                String[] kv1 = kv.split("=");
+                paramMap.put(kv1[0], kv1[2]);
+            }
         }
 
         // 注入配置文件参数
         conf.forEach(paramMap::putIfAbsent);
+//        paramMap.remove("key");
+//        paramMap.remove("user");
+//        paramMap.remove("password");
+//        paramMap.remove("driverClassName");
 
         // 重组url
         String url = String.format("jdbc:mysql://%1$s:%2$d/%3$s", host, port, database);
         // 重组参数
         String params = paramMap.entrySet().stream()
-                .map(e -> e.getKey().toString() + '=' + e.getValue())
+                .map(e -> e.getKey() + '=' + e.getValue())
                 .collect(Collectors.joining("&"));
 
         return url + '?' + params;

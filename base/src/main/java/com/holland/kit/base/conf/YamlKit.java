@@ -44,7 +44,7 @@ public class YamlKit implements ConfKit<Map<String, Object>> {
         Yaml yaml = new Yaml();
         try (InputStream inputStream = resource.openStream()) {
             List<Map<String, Object>>                load = yaml.load(inputStream);
-            Map<String, Object> obj  = yaml.load(inputStream);
+            Map<String, Object> obj  = (Map<String, Object>) load.get(0).get("conf");
             if (cached)
                 CachedConf.getInstance().put(uri, obj);
             return Either.success(obj);
