@@ -12,8 +12,15 @@ public interface ILog {
 
     void info(String msg, Object... args);
 
+    void warn(String msg, Object... args);
+
     /**
      * @param args 末尾传 Throwable 自动打印栈信息
      */
     void error(String msg, Object... args);
+
+    /**
+     * @param args 末尾传 Throwable 自动打印栈信息
+     */
+    void fatal(String msg, Object... args);
 }

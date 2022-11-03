@@ -3,23 +3,30 @@ package com.holland.kit.base.log;
 import com.holland.kit.base.functional.NonFunc;
 
 public enum Level {
-    TRACE(16), DEBUG(8), INFO(4), ERROR(2);
-    public final int i;
+    ALL((byte) 64),
+    TRACE((byte) 32),
+    DEBUG((byte) 16),
+    INFO((byte) 8),
+    WARN((byte) 4),
+    ERROR((byte) 2),
+    FATAL((byte) 1),
+    OFF((byte) 0);
+    public final byte b;
 
-    Level(int i) {
-        this.i = i;
+    Level(byte b) {
+        this.b = b;
     }
 
     public boolean notNeedWrite() {
         switch (this) {
             case TRACE:
-                return this.i >> 4 == 0;
+                return this.b >> 4 == 0;
             case DEBUG:
-                return this.i >> 3 == 0;
+                return this.b >> 3 == 0;
             case INFO:
-                return this.i >> 2 == 0;
+                return this.b >> 2 == 0;
             case ERROR:
-                return this.i >> 1 == 0;
+                return this.b >> 1 == 0;
             default:
                 throw new IllegalStateException("Unexpected value: " + this);
         }

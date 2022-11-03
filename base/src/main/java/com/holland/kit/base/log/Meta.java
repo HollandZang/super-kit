@@ -1,19 +1,23 @@
 package com.holland.kit.base.log;
 
+import com.holland.kit.base.Pair;
+import com.holland.kit.base.Trie;
 import com.holland.kit.base.conf.YamlKit;
 import com.holland.kit.base.functional.Either;
 
-import java.util.Date;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
-import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class Meta {
-    Class<?> clazz;
-    Level    level;
-    String   formatter;
+    Level                            level;
+    Trie                             levels;
+    String                           template;
+    String                           date_time_formatter;
+    Map<Level, Pair<String, String>> color_formatter;
+    long                             timer;
+    Class<?>                         clazz;
 
     private static volatile Meta instance;
 
@@ -28,90 +32,80 @@ public class Meta {
                             .then(conf -> {
                                 // 读取配置文件、实例化Meta对象
                                 Level level;
-                                String formatter;
+                                String formatter, date_time_formatter;
+                                Map<Level, Pair<String, String>> color_formatter;
                                 try {
                                     //noinspection unchecked
                                     Map<String, ?> params = (Map<String, ?>) conf.get("com.holland.kit.base.log");
                                     level = Level.valueOf((String) params.get("level"));
-                                    formatter = (String) params.get("formatter");
+                                    formatter = (String) params.get("template");
+                                    date_time_formatter = (String) params.get("date_time_formatter");
+                                    color_formatter = loadColor(params);
                                 } catch (Exception e) {
                                     return Either.error(e);
                                 }
+                                // TODO: 3/11/2022 配置字典树
                                 instance = new Meta();
                                 instance.level = level;
-                                instance.formatter = formatter;
+                                instance.template = formatter;
+                                instance.date_time_formatter = date_time_formatter;
+                                instance.color_formatter = color_formatter;
+                                instance.timer = System.currentTimeMillis();
                                 return Either.success(instance);
-                            })
-                            .peek(meta -> {
-                                // 构建formatter模板
-                                // TODO: 3/11/2022 这个在调用时去做，不然栈用的是生成时的栈
-                                Pattern compile = Pattern.compile("%[a-zA-Z]");
-                                StringBuilder builder = new StringBuilder();
-                                Matcher matcher = compile.matcher(meta.formatter);
-                                int start = 0;
-                                while (matcher.find()) {
-                                    int _start = matcher.start();
-                                    int _end = matcher.end();
-                                    builder.append(meta.formatter, start, _start);
-                                    String key = meta.formatter.substring(_start + 1, _end);
-                                    builder.append(keyFuncMap.get(key).get());
-                                    start = _end;
-                                }
-                                builder.append(meta.formatter.substring(start));
-                                meta.formatter = builder.toString();
                             })
                             .end(e -> {
                                 e.printStackTrace();
                                 System.exit(-1);
                             }, meta -> {
                             });
-
                 }
             }
         }
         return instance;
     }
 
-    public static Meta clone(Class<?> clazz) {
+    private static Map<Level, Pair<String, String>> loadColor(Map<String, ?> params) {
+        Map<Level, Pair<String, String>> container = new HashMap<>(Level.values().length - 2, 1);
+
+        //noinspection unchecked
+        Map<String, String> color_fonts = (Map<String, String>) params.get("color_fonts");
+        //noinspection unchecked
+        Map<String, String> color_backgrounds = (Map<String, String>) params.get("color_backgrounds");
+        for (Level level : Level.values()) {
+            if (Level.ALL.equals(level) || Level.OFF.equals(level))
+                continue;
+            List<String> conf = new ArrayList<>();
+            if (color_fonts != null) {
+                String ansiEnumName = color_fonts.get(level.name());
+                if (ansiEnumName != null) {
+                    String code = ColorFonts.valueOf(ansiEnumName).code;
+                    conf.add(code);
+                }
+            }
+            if (color_backgrounds != null) {
+                String ansiEnumName = color_backgrounds.get(level.name());
+                if (ansiEnumName != null) {
+                    String code = ColorBackgrounds.valueOf(ansiEnumName).code;
+                    conf.add(code);
+                }
+            }
+            if (conf.size() > 0)
+                container.put(level, new Pair<>("\033[" + String.join(";", conf) + 'm', "\033[0m"));
+        }
+
+        return container;
+    }
+
+    public Meta clone(Class<?> clazz) {
         Meta proto = getInstance();
         Meta target = new Meta();
         target.clazz = clazz;
+        // TODO: 3/11/2022 读取字典树
         target.level = proto.level;
-        target.formatter = proto.formatter;
+        target.template = proto.template;
+        target.date_time_formatter = proto.date_time_formatter;
+        target.color_formatter = proto.color_formatter;
+        target.timer = instance.timer;
         return target;
-    }
-
-    private static final Map<String, Supplier<String>> keyFuncMap = new HashMap<>(32);
-
-    static {
-        // TODO 考虑特化处理
-        // %m 输出代码中指定的讯息，如log(message)中的message
-        keyFuncMap.put("m", () -> "out");
-        // %C 输出Logger所在类的名称，通常就是所在类的全名
-//        keyFuncMap.put("C", () -> log.getClass().getName());
-
-        // %c 输出所属的类目，通常就是所在类的全名
-        keyFuncMap.put("c", () -> Thread.currentThread().getStackTrace()[1].getClassName());
-        // %d 输出日志时间点的日期或时间，默认格式为ISO8601，也可以在其后指定格式，比如：%d{yyy MMM dd HH:mm:ss , SSS}，%d{ABSOLUTE}，%d{DATE}
-        keyFuncMap.put("d", () -> new Date().toString());
-        // %F 输出所在类的类名称，只有类名。
-        keyFuncMap.put("F", () -> {
-            String fullName = Thread.currentThread().getStackTrace()[1].getClassName();
-            return fullName.substring(fullName.lastIndexOf('.') + 1);
-        });
-        // %l 输出语句所在的行数，包括类名+方法名+文件名+行数
-        keyFuncMap.put("l", () -> Thread.currentThread().getStackTrace()[7].toString());
-        // %L 输出语句所在的行数，只输出数字
-        keyFuncMap.put("L", () -> Thread.currentThread().getStackTrace()[1].getLineNumber() + "");
-        // %M 输出方法名
-        keyFuncMap.put("M", () -> Thread.currentThread().getStackTrace()[1].getMethodName());
-        // %p 输出日志级别，即DEBUG，INFO，WARN，ERROR，FATAL
-        keyFuncMap.put("p", () -> Meta.getInstance().level.name());
-        // %r 输出自应用启动到输出该log信息耗费的毫秒数
-        keyFuncMap.put("r", () -> System.currentTimeMillis() + "");
-        // %t 输出产生该日志事件的线程名
-        keyFuncMap.put("t", () -> Thread.currentThread().getName());
-        // %n 输出一个回车换行符，Windows平台为“/r/n”，Unix平台为“/n”
-        keyFuncMap.put("n", () -> "\r\n");
     }
 }

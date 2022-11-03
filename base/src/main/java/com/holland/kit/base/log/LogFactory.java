@@ -1,7 +1,6 @@
 package com.holland.kit.base.log;
 
 
-import com.holland.kit.base.conf.ParamConfig;
 import com.holland.kit.base.conf.YamlKit;
 import com.holland.kit.base.functional.Either;
 
@@ -16,7 +15,7 @@ public class LogFactory {
         Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log_bak.yml", true);
         Map<String, Object> conf = read.t;
         //noinspection unchecked
-        Object o = ((Map<String,?>)conf.get("com.holland.kit.base.log")).get("type");
+        Object o = ((Map<String, ?>) conf.get("com.holland.kit.base.log")).get("type");
         this.LOG_TYPE = LogType.valueOf((String) o);
     }
 
@@ -32,7 +31,7 @@ public class LogFactory {
     }
 
     public static ILog create(Class<?> clazz) {
-        return getInstance().LOG_TYPE.create(clazz, Meta.clone(clazz));
+        return getInstance().LOG_TYPE.create(clazz, Meta.getInstance().clone(clazz));
     }
 
     private enum LogType {

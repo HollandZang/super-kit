@@ -1,4 +1,16 @@
 com.holland.kit.base.log:
+  color_fonts:
+    TRACE: WHITE
+    DEBUG: BOTTLE_GREEN
+    WARN: YELLOW
+    ERROR: RED
+    FATAL: RED
+  color_backgrounds:
+    FATAL: BLACK
   type: STANDARD_LOG
   level: TRACE
-  formatter: "%c,%d,%F,%l,%L,%m,%M,%p,%r,%t,%n"
+  levels:
+    com.holland.kit.base.conf: TRACE
+    com.holland.kit.base.conf.PropertiesKit: INFO
+  template: "%d %p %F#%M:%L => %m"
+  date_time_formatter: yyyy-MM-dd HH:mm:ss
