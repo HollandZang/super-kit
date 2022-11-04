@@ -1,17 +1,20 @@
 package com.holland.kit.db;
 
-import com.holland.kit.base.conf.YamlKit;
-import com.holland.kit.base.functional.Either;
+import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.LogFactory;
+import com.holland.kit.db.tenant.MysqlManager;
 
 import java.util.List;
 import java.util.Map;
 
 public class Commander {
-    public static void main(String[] args) {
-        Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read("", "datasource.yml", false);
-        MysqlPool pool = new MysqlPool(read.t);
+    private static final ILog log = LogFactory.create(Commander.class);
 
-        List<Map<String, ?>> exec = pool.exec("select * from sys_user limit 10");
-        System.out.println(exec);
+    public static void main(String[] args) {
+        MysqlManager mysqlManager = MysqlManager.getInstance();
+
+        List<Map<String, ?>> exec = mysqlManager.use("243").exec("select 1");
+
+        log.fatal(exec.toString());
     }
 }

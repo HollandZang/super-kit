@@ -8,7 +8,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 public class YamlKit implements ConfKit<Map<String, Object>> {
@@ -39,11 +38,11 @@ public class YamlKit implements ConfKit<Map<String, Object>> {
         ClassLoader classLoader = this.getClass().getClassLoader();
         URL         resource    = classLoader.getResource(uri);
         if (null == resource)
-            return Either.error(new FileNotFoundException(uri));
+            return Either.error(new FileNotFoundException('[' + uri + ']'));
 
         Yaml yaml = new Yaml();
         try (InputStream inputStream = resource.openStream()) {
-            Map<String, Object> obj  = yaml.load(inputStream);
+            Map<String, Object> obj = yaml.load(inputStream);
             if (cached)
                 CachedConf.getInstance().put(uri, obj);
             return Either.success(obj);

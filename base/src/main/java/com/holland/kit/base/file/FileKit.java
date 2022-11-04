@@ -49,7 +49,7 @@ public class FileKit {
 
         return file.exists()
                 ? Either.success(file)
-                : Either.error(new FileNotFoundException(uri));
+                : Either.error(new FileNotFoundException('[' + uri + ']'));
     }
 
     public static Either<Throwable, File> write(String path, String filename, boolean append, String content) {

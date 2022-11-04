@@ -4,7 +4,9 @@ import com.holland.kit.base.Pair;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -26,11 +28,11 @@ public abstract class BaseLog implements ILog {
 
         // 构建formatter模板
         StringBuilder builder = new StringBuilder();
-        Matcher matcher = COMPILE_FORMATTER.matcher(meta.template);
-        int start = 0;
+        Matcher       matcher = COMPILE_FORMATTER.matcher(meta.template);
+        int           start   = 0;
         while (matcher.find()) {
             int _start = matcher.start();
-            int _end = matcher.end();
+            int _end   = matcher.end();
             builder.append(meta.template, start, _start);
             String key = meta.template.substring(_start + 1, _end);
             builder.append(KEY_FUNC.get(key).build(callLevel, this, _msg));
@@ -49,11 +51,11 @@ public abstract class BaseLog implements ILog {
         if (null == msg) return null;
         if (args.length == 0) return msg;
         StringBuilder builder = new StringBuilder();
-        Matcher matcher = COMPILE_MSG.matcher(msg);
-        int start = 0, idx = 0;
+        Matcher       matcher = COMPILE_MSG.matcher(msg);
+        int           start   = 0, idx = 0;
         while (matcher.find()) {
             int _start = matcher.start();
-            int _end = matcher.end();
+            int _end   = matcher.end();
             builder.append(msg, start, _start);
             builder.append(args[idx++]);
             start = _end;
@@ -61,8 +63,10 @@ public abstract class BaseLog implements ILog {
         builder.append(msg.substring(start));
         if (callLevel.b >> 2 == 0 && idx < args.length) {
             Object exception = args[args.length - 1];
-            if (exception instanceof Throwable)
-                builder.append(Arrays.stream(((Throwable) exception).getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining("\r\n\t", "\r\n\t", "")));
+            if (exception instanceof Throwable) {
+                builder.append(" ").append(exception.getClass().getSimpleName()).append(" :").append(((Throwable) exception).getMessage()).append("\r\n\t");
+                builder.append(Arrays.stream(((Throwable) exception).getStackTrace()).map(StackTraceElement::toString).collect(Collectors.joining("\r\n\t")));
+            }
         }
         return builder.toString();
     }

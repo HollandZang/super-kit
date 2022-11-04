@@ -31,8 +31,8 @@ public class Meta {
                     YamlKit.getInstance().read(".", "log_bak.yml", true)
                             .then(conf -> {
                                 // 读取配置文件、实例化Meta对象
-                                Level level;
-                                String formatter, date_time_formatter;
+                                Level                            level;
+                                String                           formatter, date_time_formatter;
                                 Map<Level, Pair<String, String>> color_formatter;
                                 try {
                                     //noinspection unchecked
@@ -97,7 +97,7 @@ public class Meta {
     }
 
     public Meta clone(Class<?> clazz) {
-        Meta proto = getInstance();
+        Meta proto  = getInstance();
         Meta target = new Meta();
         target.clazz = clazz;
         // TODO: 3/11/2022 读取字典树

@@ -2,7 +2,7 @@ com.holland.kit.db:
   - conf:
       key: 243
       driverClassName: com.mysql.cj.jdbc.Driver
-      host: 192.168.31.242
+      host: 192.168.31.243
       port: 3916
       user: root
       password: Boyang@123

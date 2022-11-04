@@ -13,7 +13,7 @@ public class LogFactory {
 
     private LogFactory() {
         Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log_bak.yml", true);
-        Map<String, Object> conf = read.t;
+        Map<String, Object>                    conf = read.t;
         //noinspection unchecked
         Object o = ((Map<String, ?>) conf.get("com.holland.kit.base.log")).get("type");
         this.LOG_TYPE = LogType.valueOf((String) o);
