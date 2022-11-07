@@ -1,7 +1,7 @@
 package com.holland.kit.base.log;
 
 
-import com.holland.kit.base.conf.YamlKit;
+import com.holland.kit.base.file.YamlKit;
 import com.holland.kit.base.functional.Either;
 
 import java.util.Map;
@@ -12,7 +12,7 @@ public class LogFactory {
     private static volatile LogFactory instance;
 
     private LogFactory() {
-        Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log_bak.yml", true);
+        Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log.yml", true);
         Map<String, Object>                    conf = read.t;
         //noinspection unchecked
         Object o = ((Map<String, ?>) conf.get("com.holland.kit.base.log")).get("type");

@@ -42,10 +42,6 @@ public class MysqlPool extends JDBCPool {
 
         // 注入配置文件参数
         conf.forEach(paramMap::putIfAbsent);
-//        paramMap.remove("key");
-//        paramMap.remove("user");
-//        paramMap.remove("password");
-//        paramMap.remove("driverClassName");
 
         // 重组url
         String url = String.format("jdbc:mysql://%1$s:%2$d/%3$s", host, port, database);

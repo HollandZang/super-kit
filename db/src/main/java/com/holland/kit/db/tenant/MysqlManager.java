@@ -1,6 +1,8 @@
 package com.holland.kit.db.tenant;
 
-import com.holland.kit.base.conf.YamlKit;
+import com.alibaba.fastjson.JSONArray;
+import com.holland.kit.base.JsonX;
+import com.holland.kit.base.file.YamlKit;
 import com.holland.kit.base.functional.Either;
 import com.holland.kit.base.log.ILog;
 import com.holland.kit.base.log.LogFactory;
@@ -29,12 +31,11 @@ public class MysqlManager {
                 if (instance == null) {
                     YamlKit.getInstance().read(".", "datasource.yml", false)
                             .then(read -> {
-                                //noinspection unchecked
-                                List<Map<String, Object>> confList = ((List<Map<String, Object>>) read.get("com.holland.kit.db"));
-                                instance = new MysqlManager(confList.size());
-                                for (Map<String, Object> map : confList) {
-                                    //noinspection unchecked
-                                    Map<String, Object> conf = (Map<String, Object>) map.get("conf");
+                                JsonX confList = new JsonX(read.get("com.holland.kit.db"));
+                                int   size     = ((JSONArray) confList.resource).size();
+                                instance = new MysqlManager(size);
+                                for (int i = 0; i < size; i++) {
+                                    Map<String, Object> conf = confList.find("[0].conf");
                                     String              key  = conf.getOrDefault("key", DEFAULT_KEY).toString();
                                     if (instance.pools.containsKey(key))
                                         return Either.error(new RuntimeException("Duplicate key: " + key));

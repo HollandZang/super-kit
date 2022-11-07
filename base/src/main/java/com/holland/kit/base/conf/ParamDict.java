@@ -1,5 +1,6 @@
 package com.holland.kit.base.conf;
 
+import com.holland.kit.base.file.PropertiesKit;
 import com.holland.kit.base.log.ILog;
 import com.holland.kit.base.log.LogFactory;
 

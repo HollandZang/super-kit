@@ -2,22 +2,16 @@ package com.holland.kit.base;
 
 import com.holland.kit.base.file.FileKit;
 import com.holland.kit.base.functional.Either;
-import com.holland.kit.base.log.ILog;
-import com.holland.kit.base.log.LogFactory;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class Trie<Key, Data> {
-    private static final ILog log           = LogFactory.create(Trie.class);
-    private static final int  DEFAULT_LIMIT = 10;
+    private static final int DEFAULT_LIMIT = 10;
 
-    private       int                  limit;
-    private final Key                  key;
-    private       Set<Data>            dataSet;
-    private       Set<Trie<Key, Data>> children;
+    private      int                  limit;
+    public final Key                  key;
+    public       Set<Data>            dataSet;
+    public       Set<Trie<Key, Data>> children;
 
     public static <Key, Data> Trie<Key, Data> create(List<Pair<List<Key>, Data>> pairs) {
         return create(DEFAULT_LIMIT, pairs);
@@ -56,13 +50,8 @@ public class Trie<Key, Data> {
                 });
         if (either.e != null) throw either.e;
 
-        Trie<Character, String> trie     = Trie.create(either.t);
-        List<Character>         prefixes = new ArrayList<>();
-        prefixes.add('a');
-        prefixes.add('z');
-        prefixes.add('a');
-        prefixes.add('d');
-        Set<String> match = trie.matchPrefixes(prefixes);
+        Trie<Character, String> trie  = Trie.create(either.t);
+        Set<String>             match = trie.matchPrefixes('a', 'z', 'a', 'd');
         System.out.println(match);
     }
 
@@ -80,7 +69,7 @@ public class Trie<Key, Data> {
                 currNode.children.add(next);
                 currNode = next;
             } else {
-                Trie<Key, Data> child = currNode.children.stream().filter(it -> it.key == k).findFirst().orElse(null);
+                Trie<Key, Data> child = currNode.children.stream().filter(it -> Objects.equals(it.key, k)).findFirst().orElse(null);
                 if (child != null) {
                     currNode = child;
                 } else {
@@ -98,24 +87,34 @@ public class Trie<Key, Data> {
         }
     }
 
-    public Set<Data> matchPrefixes(List<Key> prefixes) {
-        return matchPrefixes(prefixes, limit);
-    }
-
-    public Set<Data> matchPrefixes(List<Key> prefixes, int limit) {
-        if (limit < 1) limit = 1;
+    @SafeVarargs
+    public final Trie<Key, Data> findNode(Key... prefixes) {
         Trie<Key, Data> currNode = this;
         for (Key k : prefixes) {
             if (currNode.children == null) {
-                return new HashSet<>();
+                return null;
             } else {
-                Trie<Key, Data> child = currNode.children.stream().filter(it -> it.key == k).findFirst().orElse(null);
+                Trie<Key, Data> child = currNode.children.stream().filter(it -> Objects.equals(it.key, k)).findFirst().orElse(null);
                 if (child == null)
-                    return new HashSet<>();
+                    return null;
                 else
                     currNode = child;
             }
         }
+        return currNode;
+    }
+
+    @SafeVarargs
+    public final Set<Data> matchPrefixes(Key... prefixes) {
+        return matchPrefixes(limit, prefixes);
+    }
+
+    @SafeVarargs
+    public final Set<Data> matchPrefixes(Integer limit, Key... prefixes) {
+        if (limit == null || limit < 1) limit = 1;
+        Trie<Key, Data> currNode = findNode(prefixes);
+        if (currNode == null)
+            return new HashSet<>();
 
         Set<Data> container = new HashSet<>();
         try {
