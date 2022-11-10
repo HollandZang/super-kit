@@ -3,9 +3,13 @@ package com.holland.kit.base;
 import com.holland.kit.base.file.FileKit;
 import com.holland.kit.base.functional.Either;
 
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.*;
+import java.util.stream.Collectors;
 
-public class Trie<Key, Data> {
+public class Trie<Key extends Comparable<Key>, Data> {
     private static final int DEFAULT_LIMIT = 10;
 
     private      int                  limit;
@@ -13,11 +17,11 @@ public class Trie<Key, Data> {
     public       Set<Data>            dataSet;
     public       Set<Trie<Key, Data>> children;
 
-    public static <Key, Data> Trie<Key, Data> create(List<Pair<List<Key>, Data>> pairs) {
+    public static <Key extends Comparable<Key>, Data> Trie<Key, Data> create(List<Pair<List<Key>, Data>> pairs) {
         return create(DEFAULT_LIMIT, pairs);
     }
 
-    public static <Key, Data> Trie<Key, Data> create(int limit, List<Pair<List<Key>, Data>> pairs) {
+    public static <Key extends Comparable<Key>, Data> Trie<Key, Data> create(int limit, List<Pair<List<Key>, Data>> pairs) {
         Trie<Key, Data> root = new Trie<>(null);
         root.limit = limit < 1 ? DEFAULT_LIMIT : limit;
         if (pairs == null || pairs.size() == 0) return root;
@@ -53,6 +57,11 @@ public class Trie<Key, Data> {
         Trie<Character, String> trie  = Trie.create(either.t);
         Set<String>             match = trie.matchPrefixes('a', 'z', 'a', 'd');
         System.out.println(match);
+
+        File file = new File("/Users/holland/repo/holland/super-kit/base/src/main/java/com/holland/kit/base/dump.txt");
+        trie.sort();
+        trie.dump(file);
+        System.out.println("dump OK");
     }
 
     public void insert(List<Key> keys, Data keyOriginal) {
@@ -124,7 +133,19 @@ public class Trie<Key, Data> {
         return container;
     }
 
-    private static <Key, Data> void recursion(Trie<Key, Data> trie, Set<Data> container, int limit) throws InterruptedException {
+    public void sort() {
+        Trie.sort(this);
+    }
+
+    public void dump(File target) {
+        try (FileWriter fileWriter = new FileWriter(target)) {
+            dump(this, -1, null, fileWriter);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static <Key extends Comparable<Key>, Data> void recursion(Trie<Key, Data> trie, Set<Data> container, int limit) throws InterruptedException {
         if (trie.dataSet != null) {
             container.addAll(trie.dataSet);
         }
@@ -134,6 +155,35 @@ public class Trie<Key, Data> {
             for (Trie<Key, Data> child : trie.children) {
                 recursion(child, container, limit);
             }
+        }
+    }
+
+    private static <Key extends Comparable<Key>, Data> void sort(Trie<Key, Data> trie) {
+        Set<Trie<Key, Data>> children = trie.children;
+        if (children != null && children.size() > 0) {
+            trie.children = children.stream().sorted(Comparator.comparing(it -> it.key)).collect(Collectors.toCollection(LinkedHashSet::new));
+            children.forEach(it -> sort(it));
+        }
+    }
+
+    private static <Key extends Comparable<Key>, Data> void dump(Trie<Key, Data> trie, int layer, Key key, FileWriter fileWriter) throws IOException {
+        StringBuilder spaceBuilder = new StringBuilder();
+        for (int i = 0; i < layer; i++)
+            spaceBuilder.append(" ");
+        String space = spaceBuilder.toString();
+
+        Set<Data> dataSet = trie.dataSet;
+        if (dataSet != null && dataSet.size() > 0) {
+            String content = dataSet.stream().map(data -> data == null ? "null" : data.toString()).collect(Collectors.joining(""));
+            fileWriter.write(String.format("%s|%s :%s\n", space, key, content));
+        } else {
+            fileWriter.write(String.format("%s|%s\n", space, key));
+        }
+
+        Set<Trie<Key, Data>> children = trie.children;
+        if (children != null && children.size() > 0) {
+            for (Trie<Key, Data> it : children)
+                dump(it, layer + 1, it.key, fileWriter);
         }
     }
 }
