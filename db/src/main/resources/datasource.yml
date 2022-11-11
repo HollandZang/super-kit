@@ -1,26 +1,30 @@
 com.holland.kit.db:
   - conf:
-      key: 243
-      driverClassName: com.mysql.cj.jdbc.Driver
-      host: 192.168.31.243
-      port: 3916
-      user: root
-      password: Boyang@123
-      database: zhxfz
-      # 时区
-      serverTimezone: Asia/Shanghai
-      # 日期转换 CONVERT_TO_NULL, EXCEPTION, ROUND;
-      zeroDateTimeBehavior: CONVERT_TO_NULL
-      # 字符集
-      characterEncoding: utf8
-      # 是否使用Unicode字符集，如果参数characterEncoding设置为gb2312或gbk，本参数值必须设置为true
-      useUnicode: true
-      # 当数据库连接异常中断时，是否自动重新连接
-      autoReconnect: true
-      # 是否使用针对数据库连接池的重连策略
-      autoReconnectForPools: true
-      # autoReconnect设置为true时，重试连接的次数
-      maxReconnects: 10
-      # 自动重连成功后，连接是否设置为只读
-      failOverReadOnly: false
+    key: 1
+    driverClassName: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://:3916/zhxfz?user=root&password=Boyang@123&database=zhxfz&failOverReadOnly=false&autoReconnect=true&maxReconnects=10&useUnicode=true&port=3916&driverClassName=com.mysql.cj.jdbc.Driver&host=192.168.31.243&serverTimezone=Asia/Shanghai&zeroDateTimeBehavior=CONVERT_TO_NULL&characterEncoding=utf8&autoReconnectForPools=true
+  - conf:
+    key: 243
+    driverClassName: com.mysql.cj.jdbc.Driver
+    host: 192.168.31.243
+    port: 3916
+    user: root
+    password: Boyang@123
+    database: zhxfz
+    # 时区
+    serverTimezone: Asia/Shanghai
+    # 日期转换 CONVERT_TO_NULL, EXCEPTION, ROUND;
+    zeroDateTimeBehavior: CONVERT_TO_NULL
+    # 字符集
+    characterEncoding: utf8
+    # 是否使用Unicode字符集，如果参数characterEncoding设置为gb2312或gbk，本参数值必须设置为true
+    useUnicode: true
+    # 当数据库连接异常中断时，是否自动重新连接
+    autoReconnect: true
+    # 是否使用针对数据库连接池的重连策略
+    autoReconnectForPools: true
+    # autoReconnect设置为true时，重试连接的次数
+    maxReconnects: 10
+    # 自动重连成功后，连接是否设置为只读
+    failOverReadOnly: false
 

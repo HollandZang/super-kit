@@ -13,7 +13,7 @@ public class Commander {
     public static void main(String[] args) {
         MysqlManager mysqlManager = MysqlManager.getInstance();
 
-        List<Map<String, ?>> exec = mysqlManager.use("243").exec("select 1");
+        List<Map<String, ?>> exec = mysqlManager.use("1").exec("select 1");
 
         log.fatal(exec.toString());
     }

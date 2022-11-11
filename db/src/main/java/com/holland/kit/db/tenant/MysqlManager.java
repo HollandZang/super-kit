@@ -35,7 +35,7 @@ public class MysqlManager {
                                 int   size     = ((JSONArray) confList.resource).size();
                                 instance = new MysqlManager(size);
                                 for (int i = 0; i < size; i++) {
-                                    Map<String, Object> conf = confList.find("[0].conf");
+                                    Map<String, Object> conf = confList.find("[" + i + "]");
                                     String              key  = conf.getOrDefault("key", DEFAULT_KEY).toString();
                                     if (instance.pools.containsKey(key))
                                         return Either.error(new RuntimeException("Duplicate key: " + key));
