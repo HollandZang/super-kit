@@ -13,8 +13,9 @@ public class Commander {
     public static void main(String[] args) {
         MysqlManager mysqlManager = MysqlManager.getInstance();
 
-        List<Map<String, ?>> exec = mysqlManager.use("1").exec("select 1");
-
-        log.fatal(exec.toString());
+        mysqlManager.pools.forEach((s, mysqlPool) -> {
+            List<Map<String, ?>> exec = mysqlPool.exec("select 1");
+            log.fatal("{} -> {}", s, exec.toString());
+        });
     }
 }

@@ -19,7 +19,7 @@ public class MysqlManager {
 
     private static volatile MysqlManager instance;
 
-    private final Map<String, MysqlPool> pools;
+    public final Map<String, MysqlPool> pools;
 
     private MysqlManager(int initialCapacity) {
         this.pools = new HashMap<>(initialCapacity);
