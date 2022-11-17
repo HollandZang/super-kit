@@ -16,6 +16,10 @@ public class MysqlPool extends JDBCPool {
         }
         url = urlParser(conf);
         log.info("Generate database connect uri: {}", url);
+
+        // 维持核心数
+        for (int i = 0; i < corePoolSize; i++)
+            checkIn(create());
     }
 
     /**
@@ -48,6 +52,7 @@ public class MysqlPool extends JDBCPool {
         String url = String.format("jdbc:mysql://%1$s:%2$d/%3$s", host, port, database);
         // 重组参数
         String params = paramMap.entrySet().stream()
+                .filter(e -> !"key".equals(e.getKey()) && !"url".equals(e.getKey()) && !"driverClassName".equals(e.getKey()))
                 .map(e -> e.getKey() + '=' + e.getValue())
                 .collect(Collectors.joining("&"));
 

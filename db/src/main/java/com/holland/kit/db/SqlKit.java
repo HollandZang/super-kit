@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 class SqlKit {
-    public static List<Map<String, ?>> exec(Connection connection, String sql, Object... params) {
+    public static List<Map<String, ?>> exec(Connection connection, String sql, Object... params) throws SQLException {
         try (PreparedStatement statement = connection.prepareStatement(sql)) {
 //        try (PreparedStatement statement = connection.prepareStatement(sql, ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
             for (int i = 0; i < params.length; i++)
@@ -20,8 +20,6 @@ class SqlKit {
                     return genResult(resultSet);
                 }
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
         }
         return null;
     }

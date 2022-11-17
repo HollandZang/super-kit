@@ -12,5 +12,5 @@ com.holland.kit.base.log:
   levels:
     com.holland.kit.base.conf: TRACE
     com.holland.kit.base.conf.PropertiesKit: INFO
-  template: "%d %p %F#%M:%L => %m"
+  template: "%d %t %p %F#%M:%L => %m"
   date_time_formatter: yyyy-MM-dd HH:mm:ss
