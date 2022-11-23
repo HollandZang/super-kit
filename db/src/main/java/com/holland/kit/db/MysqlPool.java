@@ -32,16 +32,17 @@ public class MysqlPool extends JDBCPool {
         // 解析原有的url
         if (url != null && url.length() > 0) {
             int i = url.indexOf('?');
-            String[] keys = url.substring(0, i)
+            String[] keys = (i == -1 ? url : url.substring(0, i))
                     .replaceAll("jdbc:mysql://([\\w._-]*):(\\d*)/([_\\w]*)", "$1,$2,$3")
                     .split(",");
             host = keys[0];
             port = Integer.parseInt(keys[1]);
             database = keys[2];
-            for (String kv : url.substring(i + 1).split("&")) {
-                String[] kv1 = kv.split("=");
-                paramMap.put(kv1[0], kv1[1]);
-            }
+            if (i > 0)
+                for (String kv : url.substring(i + 1).split("&")) {
+                    String[] kv1 = kv.split("=");
+                    paramMap.put(kv1[0], kv1[1]);
+                }
         }
 
         // 注入配置文件参数

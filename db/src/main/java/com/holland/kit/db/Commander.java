@@ -14,7 +14,7 @@ public class Commander {
         MysqlManager mysqlManager = MysqlManager.getInstance();
 
         mysqlManager.pools.forEach((s, mysqlPool) -> {
-            List<Map<String, ?>> exec = mysqlPool.execIgnoreException("");
+            List<Map<String, ?>> exec = mysqlPool.execIgnoreException("select 1");
             log.fatal("{} -> res:{}", s, exec);
         });
 
