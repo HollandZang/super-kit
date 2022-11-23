@@ -22,7 +22,7 @@ public abstract class JDBCPool extends ObjectPool<Connection> {
     public JDBCPool(Map<String, Object> conf) {
         super((Integer) conf.getOrDefault("corePoolSize", 1)
                 , (Integer) conf.getOrDefault("maximumPoolSize", 10)
-                , (Integer) conf.getOrDefault("keepAliveTime", 5L)
+                , (Integer) conf.getOrDefault("keepAliveTime", 5)
                 , TimeUnit.valueOf((String) conf.getOrDefault("unit", TimeUnit.MINUTES.name())));
 
         this.driverClassName = (String) conf.get("driverClassName");
@@ -44,7 +44,7 @@ public abstract class JDBCPool extends ObjectPool<Connection> {
     protected Connection create() {
         try {
             log.trace("Create a connection: host[{}] port[{}] database[{}]", host, port, database);
-            return DriverManager.getConnection(url);
+            return DriverManager.getConnection(url, user, password);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }

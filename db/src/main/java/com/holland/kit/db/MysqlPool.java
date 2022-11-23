@@ -32,9 +32,8 @@ public class MysqlPool extends JDBCPool {
         // 解析原有的url
         if (url != null && url.length() > 0) {
             int i = url.indexOf('?');
-            // TODO 解析规则暂不支持域名
             String[] keys = url.substring(0, i)
-                    .replaceAll("jdbc:mysql://([\\d.]*):(\\d*)/([_\\w]*)", "$1,$2,$3")
+                    .replaceAll("jdbc:mysql://([\\w._-]*):(\\d*)/([_\\w]*)", "$1,$2,$3")
                     .split(",");
             host = keys[0];
             port = Integer.parseInt(keys[1]);
@@ -50,6 +49,8 @@ public class MysqlPool extends JDBCPool {
 
         // 重组url
         String url = String.format("jdbc:mysql://%1$s:%2$d/%3$s", host, port, database);
+        user = (String) paramMap.remove("user");
+        password = (String) paramMap.remove("password");
         // 重组参数
         String params = paramMap.entrySet().stream()
                 .filter(e -> !"key".equals(e.getKey()) && !"url".equals(e.getKey()) && !"driverClassName".equals(e.getKey()))

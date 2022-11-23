@@ -10,12 +10,13 @@ import java.util.Map;
 public class Commander {
     private static final ILog log = LogFactory.create(Commander.class);
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
         MysqlManager mysqlManager = MysqlManager.getInstance();
 
         mysqlManager.pools.forEach((s, mysqlPool) -> {
-            List<Map<String, ?>> exec = mysqlPool.execIgnoreException("select 1");
-            log.fatal("{} -> OK", s);
+            List<Map<String, ?>> exec = mysqlPool.execIgnoreException("");
+            log.fatal("{} -> res:{}", s, exec);
         });
+
     }
 }
