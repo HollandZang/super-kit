@@ -10,11 +10,13 @@ import java.util.function.BiFunction;
 
 public class JsonX {
     public static void main(String[] args) {
-        final JSON json = (JSON) JSON.parse("{a:1,data:[{uid:\"157580\",activeCid:\"69\",activeChannel:\"kuaikan\",activeGid:\"1000\",activeIP:\"2882823743\",channelUid:\"91627840_3\",status:\"0\"}]}");
+        final JSONObject json = (JSONObject) JSON.parse("{a:1,data:[{uid:\"157580\",activeCid:\"69\",activeChannel:\"kuaikan\",activeGid:\"1000\",activeIP:\"2882823743\",channelUid:\"91627840_3\",status:\"0\"}]}");
+        JSONObject       data = json.getJSONArray("data").getJSONObject(0);
 
         final JsonX jsonX = new JsonX(json);
-        Object      l     = jsonX.find("data[0]uid");
-        System.out.println(l);
+        JSONObject  data0 = jsonX.find("data[0]");
+        data0.put("uid", "new_uid");
+        System.out.println(json);
     }
 
     public final JSON resource;
