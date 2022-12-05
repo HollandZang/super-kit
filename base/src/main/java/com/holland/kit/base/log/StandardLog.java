@@ -3,7 +3,7 @@ package com.holland.kit.base.log;
 /**
  * 控制台标准打印日志
  */
-public class StandardLog extends BaseLog implements ILog {
+public class StandardLog extends BaseLog implements Log {
 
     public StandardLog(Meta meta) {
         super(meta);

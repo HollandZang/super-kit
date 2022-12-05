@@ -1,6 +1,6 @@
 package com.holland.kit.base.functional;
 
-import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.Log;
 import com.holland.kit.base.log.LogFactory;
 
 import java.util.ArrayList;

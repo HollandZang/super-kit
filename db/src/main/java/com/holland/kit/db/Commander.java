@@ -1,21 +1,25 @@
 package com.holland.kit.db;
 
-import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.Log;
 import com.holland.kit.base.log.LogFactory;
-import com.holland.kit.db.tenant.MysqlManager;
+import com.holland.kit.db.tenant.DataBaseManager;
 
 import java.util.List;
 import java.util.Map;
 
 public class Commander {
-    private static final ILog log = LogFactory.create(Commander.class);
+    private static final Log log = LogFactory.create(Commander.class);
 
     public static void main(String[] args) throws InterruptedException {
-        MysqlManager mysqlManager = MysqlManager.getInstance();
+        DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-        mysqlManager.pools.forEach((s, mysqlPool) -> {
-            List<Map<String, ?>> exec = mysqlPool.execIgnoreException("select 1");
-            log.fatal("{} -> res:{}", s, exec);
+        String sqlList = "select 1 ;";
+
+        dataBaseManager.pools.forEach((s, pool) -> {
+            for (String sql : sqlList.split(";")) {
+                List<Map<String, ?>> exec = pool.execIgnoreException(sql);
+                log.fatal("{} -> res:{}", s, exec);
+            }
         });
 
     }

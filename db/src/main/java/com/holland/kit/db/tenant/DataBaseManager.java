@@ -4,7 +4,7 @@ import com.alibaba.fastjson.JSONArray;
 import com.holland.kit.base.JsonX;
 import com.holland.kit.base.file.YamlKit;
 import com.holland.kit.base.functional.Either;
-import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.Log;
 import com.holland.kit.base.log.LogFactory;
 import com.holland.kit.db.JDBCPool;
 import com.holland.kit.db.MysqlPool;
@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 public class DataBaseManager {
-    private static final ILog log = LogFactory.create(DataBaseManager.class);
+    private static final Log log = LogFactory.create(DataBaseManager.class);
 
     private static final String DEFAULT_KEY = "DEFAULT_KEY";
 

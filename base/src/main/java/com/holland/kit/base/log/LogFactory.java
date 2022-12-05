@@ -30,18 +30,18 @@ public class LogFactory {
         return instance;
     }
 
-    public static ILog create(Class<?> clazz) {
+    public static Log create(Class<?> clazz) {
         return getInstance().LOG_TYPE.create(clazz, Meta.getInstance().clone(clazz));
     }
 
     private enum LogType {
         STANDARD_LOG() {
             @Override
-            public <T> ILog create(Class<T> clazz, Meta meta) {
+            public <T> Log create(Class<T> clazz, Meta meta) {
                 return new StandardLog(meta);
             }
         };
 
-        public abstract <T> ILog create(Class<T> clazz, Meta meta);
+        public abstract <T> Log create(Class<T> clazz, Meta meta);
     }
 }

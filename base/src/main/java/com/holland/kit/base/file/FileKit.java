@@ -1,14 +1,14 @@
 package com.holland.kit.base.file;
 
 import com.holland.kit.base.functional.Either;
-import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.Log;
 import com.holland.kit.base.log.LogFactory;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
 
 public class FileKit {
-    private static final ILog log = LogFactory.create(FileKit.class);
+    private static final Log log = LogFactory.create(FileKit.class);
 
     public static Either<Throwable, File> mkdir(String path) {
         File file = new File(path);

@@ -1,7 +1,7 @@
 package com.holland.kit.base;
 
 
-import com.holland.kit.base.log.ILog;
+import com.holland.kit.base.log.Log;
 import com.holland.kit.base.log.LogFactory;
 
 import java.util.Enumeration;
@@ -10,8 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 public abstract class ObjectPool<T> {
-    protected final ILog     log = LogFactory.create(this.getClass());
-    protected final int      corePoolSize;
+    protected final Log log = LogFactory.create(this.getClass());
+    protected final int corePoolSize;
     protected final int      maximumPoolSize;
     protected final long     keepAliveTime;
     protected final TimeUnit unit;

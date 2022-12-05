@@ -11,7 +11,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
-public abstract class BaseLog implements ILog {
+public abstract class BaseLog implements Log {
 
     private static final   Map<String, Fn_Formatter> KEY_FUNC          = new HashMap<>(32);
     private static final   int                       IDX               = 6;
