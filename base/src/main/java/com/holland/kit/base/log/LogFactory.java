@@ -8,12 +8,12 @@ import java.util.Map;
 
 public class LogFactory {
 
-    public                  LogType    LOG_TYPE;
+    public LogType LOG_TYPE;
     private static volatile LogFactory instance;
 
     private LogFactory() {
         Either<Throwable, Map<String, Object>> read = YamlKit.getInstance().read(".", "log.yml", true);
-        Map<String, Object>                    conf = read.t;
+        Map<String, Object> conf = read.t;
         //noinspection unchecked
         Object o = ((Map<String, ?>) conf.get("com.holland.kit.base.log")).get("type");
         this.LOG_TYPE = LogType.valueOf((String) o);
@@ -31,17 +31,21 @@ public class LogFactory {
     }
 
     public static Log create(Class<?> clazz) {
-        return getInstance().LOG_TYPE.create(clazz, Meta.getInstance().clone(clazz));
+        return getInstance().LOG_TYPE.create(Meta.getInstance().clone(clazz));
+    }
+
+    public static Log create(String name) {
+        return getInstance().LOG_TYPE.create(Meta.getInstance().clone(name));
     }
 
     private enum LogType {
         STANDARD_LOG() {
             @Override
-            public <T> Log create(Class<T> clazz, Meta meta) {
+            public Log create(Meta meta) {
                 return new StandardLog(meta);
             }
         };
 
-        public abstract <T> Log create(Class<T> clazz, Meta meta);
+        public abstract Log create(Meta meta);
     }
 }

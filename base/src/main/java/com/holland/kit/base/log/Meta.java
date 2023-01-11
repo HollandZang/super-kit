@@ -10,13 +10,12 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 public class Meta {
-    Level                            level;
-    Trie<String, Level>              levels; // 根据类名获取不同的日志级别
-    String                           template;
-    String                           date_time_formatter;
+    Level level;
+    Trie<String, Level> levels; // 根据类名获取不同的日志级别
+    String template;
+    String date_time_formatter;
     Map<Level, Pair<String, String>> color_formatter;
-    long                             timer;
-    Class<?>                         clazz;
+    long timer;
 
     private static volatile Meta instance;
 
@@ -30,9 +29,9 @@ public class Meta {
                     YamlKit.getInstance().read(".", "log.yml", true)
                             .then(conf -> {
                                 // 读取配置文件、实例化Meta对象
-                                Level                            level;
-                                Trie<String, Level>              levels;
-                                String                           formatter,                date_time_formatter;
+                                Level level;
+                                Trie<String, Level> levels;
+                                String formatter, date_time_formatter;
                                 Map<Level, Pair<String, String>> color_formatter;
                                 try {
                                     JsonX params = new JsonX(conf.get("com.holland.kit.base.log"));
@@ -67,8 +66,8 @@ public class Meta {
     private static Trie<String, Level> loadLevels(Map<String, String> levels) {
         return Trie.create(
                 levels.entrySet().stream().map(e -> {
-                    List<String> keys  = Arrays.asList(e.getKey().split("\\."));
-                    Level        value = Level.valueOf(e.getValue());
+                    List<String> keys = Arrays.asList(e.getKey().split("\\."));
+                    Level value = Level.valueOf(e.getValue());
                     return new Pair<>(keys, value);
                 }).collect(Collectors.toList())
         );
@@ -77,7 +76,7 @@ public class Meta {
     private static Map<Level, Pair<String, String>> loadColor(JsonX params) {
         Map<Level, Pair<String, String>> container = new HashMap<>(Level.values().length - 2, 1);
 
-        Map<String, String> color_fonts       = params.find("color_fonts");
+        Map<String, String> color_fonts = params.find("color_fonts");
         Map<String, String> color_backgrounds = params.find("color_backgrounds");
         for (Level level : Level.values()) {
             if (Level.ALL.equals(level) || Level.OFF.equals(level))
@@ -105,11 +104,15 @@ public class Meta {
     }
 
     public Meta clone(Class<?> clazz) {
-        Meta proto  = getInstance();
+        return clone(clazz.getName());
+    }
+
+    public Meta clone(String name) {
+        Meta proto = getInstance();
         Meta target = new Meta();
         target.level = proto.level;
         // 读取字典树
-        String[]            keys = clazz.getName().split("\\.");
+        String[] keys = name.split("\\.");
         Trie<String, Level> trie = proto.levels.findNode(keys);
         if (trie == null) {
             int len = keys.length;
@@ -124,7 +127,6 @@ public class Meta {
         if (trie != null && trie.dataSet != null) {
             trie.dataSet.stream().findFirst().ifPresent(level -> target.level = level);
         }
-        target.clazz = clazz;
         target.template = proto.template;
         target.date_time_formatter = proto.date_time_formatter;
         target.color_formatter = proto.color_formatter;
