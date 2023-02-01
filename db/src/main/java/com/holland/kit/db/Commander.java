@@ -10,10 +10,14 @@ import java.util.Map;
 public class Commander {
     private static final Log log = LogFactory.create(Commander.class);
 
-    public static void main(String[] args) throws InterruptedException {
+    public static void main(String[] args) {
         DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-        String sqlList = "select 1 ;";
+        String sqlList = "alter table sys_msg\n" +
+                "    add fbdw_dm varchar(12) null comment '发布单位代码';\n" +
+                "\n" +
+                "alter table sys_msg\n" +
+                "    add fbdw_mc varchar(64) null comment '发布单位名称';";
 
         dataBaseManager.pools.forEach((s, pool) -> {
             for (String sql : sqlList.split(";")) {
@@ -21,6 +25,5 @@ public class Commander {
                 log.fatal("{} -> res:{}", s, exec);
             }
         });
-
     }
 }

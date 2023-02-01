@@ -26,8 +26,8 @@ public class FileKit {
 
     public static Either<Throwable, File> newFile(String path, String filename) {
         mkdir(path);
-        String uri  = path + File.separatorChar + filename;
-        File   file = new File(uri);
+        String uri = path + File.separatorChar + filename;
+        File file = new File(uri);
         if (file.exists()) {
             log.debug("Find file: {}", uri);
         } else {
@@ -44,8 +44,8 @@ public class FileKit {
 
     public static Either<Throwable, File> existFile(String path, String filename) {
         mkdir(path);
-        String uri  = path + File.separatorChar + filename;
-        File   file = new File(uri);
+        String uri = path + File.separatorChar + filename;
+        File file = new File(uri);
 
         return file.exists()
                 ? Either.success(file)

@@ -85,7 +85,7 @@ public class Meta {
             if (color_fonts != null) {
                 String ansiEnumName = color_fonts.get(level.name());
                 if (ansiEnumName != null) {
-                    String code = ColorFonts.valueOf(ansiEnumName).code;
+                    String code = ColorFronts.valueOf(ansiEnumName).code;
                     conf.add(code);
                 }
             }

@@ -3,7 +3,7 @@ package com.holland.kit.base.log;
 /**
  * 字颜色:30-----------39
  */
-public enum ColorFonts {
+public enum ColorFronts {
     BLACK("30", "黑"),
     RED("31", "红"),
     GREEN("32", "绿"),
@@ -17,7 +17,7 @@ public enum ColorFonts {
     public final String code;
     public final String mark;
 
-    ColorFonts(String code, String mark) {
+    ColorFronts(String code, String mark) {
         this.code = code;
         this.mark = mark;
     }
