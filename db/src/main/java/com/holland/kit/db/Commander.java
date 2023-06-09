@@ -13,13 +13,11 @@ public class Commander {
     public static void main(String[] args) {
         DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-        String sqlList = "alter table sys_msg\n" +
-                "    add fbdw_dm varchar(12) null comment '发布单位代码';\n" +
-                "\n" +
-                "alter table sys_msg\n" +
-                "    add fbdw_mc varchar(64) null comment '发布单位名称';";
+        String sqlList = "ALTER TABLE `zb_gymckjl` ADD COLUMN `zrr_sfzh` varchar(18) NULL COMMENT '责任人身份证号码' AFTER `remake`,ADD COLUMN `zrr_xm` varchar(50) NULL COMMENT '责任人姓名' AFTER `zrr_sfzh`;";
 
         dataBaseManager.pools.forEach((s, pool) -> {
+//            String currSchema =(String) pool.exec("select SCHEMA() `SCHEMA`").get(0).get("SCHEMA");
+//            log.info("{} -> currSchema={}", s, currSchema);
             for (String sql : sqlList.split(";")) {
                 List<Map<String, ?>> exec = pool.execIgnoreException(sql);
                 log.fatal("{} -> res:{}", s, exec);

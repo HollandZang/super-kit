@@ -1,23 +1,25 @@
 package com.holland.kit.db;
 
+import com.alibaba.fastjson2.JSON;
 import com.holland.kit.base.ObjectPool;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 public abstract class JDBCPool extends ObjectPool<Connection> {
-    protected String  driverClassName;
-    protected String  host;
+    protected String driverClassName;
+    protected String host;
     protected Integer port;
-    protected String  user;
-    protected String  password;
-    protected String  database;
-    protected String  url;
+    protected String user;
+    protected String password;
+    protected String database;
+    protected String url;
 
     public JDBCPool(Map<String, Object> conf) {
         super((Integer) conf.getOrDefault("corePoolSize", 1)
@@ -77,6 +79,44 @@ public abstract class JDBCPool extends ObjectPool<Connection> {
         Connection connection = checkOut();
         try {
             return SqlKit.exec(connection, sql, params);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            checkIn(connection);
+        }
+    }
+
+    public <T> T one(Class<T> returnClass, String sql, Object... params) {
+        Connection connection = checkOut();
+        try {
+            List<Map<String, ?>> exec = SqlKit.exec(connection, sql, params);
+            if (null == exec)
+                throw new RuntimeException("SQL没有返回值, " + sql);
+            if (exec.size() > 1)
+                throw new RuntimeException("需要查询一条，但是获取到了" + exec.size() + "条, " + sql + ":" + Arrays.toString(params));
+            if (exec.size() == 0)
+                return null;
+            Map<String, ?> map = exec.get(0);
+            // TODO: 暂时用JSON获取对象，反射有类型不一致问题需要去处理
+            return JSON.parseObject(JSON.toJSONString(map), returnClass);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        } finally {
+            checkIn(connection);
+        }
+    }
+
+    public <T> List<T> more(Class<T> returnClass, String sql, Object... params) {
+        Connection connection = checkOut();
+        try {
+            List<Map<String, ?>> exec = SqlKit.exec(connection, sql, params);
+            if (null == exec)
+                throw new RuntimeException("SQL没有返回值, " + sql);
+            if (exec.size() == 0)
+                return new ArrayList<>();
+
+            // TODO: 暂时用JSON获取对象，反射有类型不一致问题需要去处理
+            return JSON.parseArray(JSON.toJSONString(exec), returnClass);
         } catch (SQLException e) {
             throw new RuntimeException(e);
         } finally {
