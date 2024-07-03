@@ -13,7 +13,8 @@ public class Commander {
     public static void main(String[] args) {
         DataBaseManager dataBaseManager = DataBaseManager.getInstance();
 
-        String sqlList = "ALTER TABLE `zb_gymckjl` ADD COLUMN `zrr_sfzh` varchar(18) NULL COMMENT '责任人身份证号码' AFTER `remake`,ADD COLUMN `zrr_xm` varchar(50) NULL COMMENT '责任人姓名' AFTER `zrr_sfzh`;";
+        String sqlList = "alter table sys_config\n" +
+                "   add column xjsppz      json                   null comment '支队配置：销假审批配置:{\\\"zdxj\\\":true,\\\"sfyqjlc\\\":true' after qjcns";
 
         dataBaseManager.pools.forEach((s, pool) -> {
 //            String currSchema =(String) pool.exec("select SCHEMA() `SCHEMA`").get(0).get("SCHEMA");

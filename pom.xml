@@ -6,6 +6,7 @@
     <modules>
         <module>base</module>
         <module>db</module>
+        <module>netty</module>
     </modules>
 
     <groupId>com.holland.kit</groupId>
